@@ -19,6 +19,7 @@ import nn.genetics.Genetics;
  * @author lazyf
  */
 public class AINewGame extends Visuals{
+    //Hello
     boolean timerCheck = false; // checks if timer should run
     int generation = 0; // keeps track of ai generation
     int round = 0; // keeps track of rounds ai played
