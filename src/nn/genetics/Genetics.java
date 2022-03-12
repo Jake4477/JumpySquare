@@ -3,7 +3,7 @@ package nn.genetics;
 import game.jumpysquare.AINewGame;
 import nn.NeuralNetwork;
 import nn.math.Random;
-import static nn.math.SearchAndSort.bubbleSortNN;
+import static nn.math.SearchAndSort.bubbleSort;
 
 /**
  *
@@ -37,40 +37,46 @@ public class Genetics {
         NeuralNetwork[] children = ranked.clone();
         int preset = 0;
         //keep best performing by comparing past best and new best    
-        if(firstRun){
-            best = ranked.clone();
-            firstRun = false;
+//        if(firstRun){
+//            best = ranked.clone();
+//            firstRun = false;
+//        }
+//        for (int i = 0; i < ranked.length; i++) {
+//            if(best[i].getFitness() < ranked[i].getFitness()){
+//                best[i] = ranked[i].clone();
+//            }
+//        }
+
+        for (int i = 0; i < 4; i++) {
+            System.out.println(ranked[i].getFitness() + " < Ranked: " + i);
         }
-        for (int i = 0; i < best.length; i++) {
-            if(best[i].getFitness() > ranked[i].getFitness()){
-                children[i] = best[i].clone();
-                ranked[i].greaterPerformer = false;
-            }
-            else{
-                ////////////////////////////LOGIC/////////////////
-            }
-        }
+        System.out.println("");
    
         if(AINewGame.amount == 1){
             children[0] = ranked[ranked.length - 1];
             preset = 1;
         }
         else{
+            System.out.println("\nNEW GEN: ");
             for (int i = 1; i < 5; i++) {
-                System.out.println(children[i].getFitness());
-                children[i] = ranked[i].clone();
+                   children[i] = ranked[i].clone(); 
+                   System.out.println(children[i] + " <- " + i);
             }
             preset = 5;
         }
-      
-        if(children[0].getFitness() > 1000){
-            return ranked.clone();
-        }
+        
+        //for the lazy way out uncomment if statement
+        
+//        if(children[0].getFitness() > 1000){
+//            System.out.println("Return Clone of ranked");
+//            return ranked.clone();
+//        }
         //look at each neurons weights
         for (int i = preset; i < ranked.length; i++) {
-            //for every player
+         
+                //for every player
             if(Random.randomInt(3, 0) == 1){
-               // p1Copy.getOutput().setBias(p2Copy.getOutput().getBias());
+               p1Copy.getOutput().setBias(p2Copy.getOutput().getBias());
             }
             for (int j = 0; j < p1Copy.getHidden().length; j++) {
                 //for every neuron 
@@ -96,6 +102,11 @@ public class Genetics {
             }
             children[i] = p1Copy.clone();
         }
+     
+        
+          for (int i = 1; i < 5; i++) {
+                   System.out.println(children[i] + " <- " + i);
+            }
         return children;
     }
 
@@ -106,7 +117,7 @@ public class Genetics {
      * @return array of two most fit Neural Networks
      */
     public NeuralNetwork[] fitness(NeuralNetwork[] networks) {
-        NeuralNetwork[] ranked = bubbleSortNN(networks);
+        NeuralNetwork[] ranked = bubbleSort(networks);
         return ranked;
     }
 

@@ -34,17 +34,20 @@ public class Collision {
         return false;
     }
 
+    
+    
     public boolean checkPoint(Rectangle player, LinkedList<Tower> towers) {
-        for (int i = 0; i < towers.size(); i++) {
-            //if touching point rectangle
-            if (player.intersects(towers.get(i).getScore())) {
-                //remove so player can't touch again
-                towers.get(i).getScore().setBounds(0, 0, 0, 0);
-                return true;
+            for (int i = 0; i < towers.size(); i++) {
+                //if touching point rectangle
+                if (player.intersects(towers.get(i).getScore())) {
+                    //remove so player can't touch again
+                    towers.get(i).getScore().setBounds(0, 0, 0, 0);
+                    return true;
+                }
             }
-        }
-        return false;
+          return false; 
     }
+    
 
     /**
      * Checks if any player in array hits any tower

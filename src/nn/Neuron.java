@@ -123,7 +123,7 @@ public class Neuron <T> {
     public Neuron clone(){
         Neuron temp = new Neuron();
         temp.bias = this.bias;
-        temp.weights = this.weights;
+        temp.weights = this.weights.clone();
         return temp;
     }
 }

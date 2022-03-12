@@ -16,6 +16,7 @@ public class Player{
     int y;
     int yVel;
     boolean dead = false;
+    public static int score = 0; // score for ai. 
     public Player(){
          x = 100;
          y = 150;
@@ -73,6 +74,7 @@ public class Player{
     public Color getColor(){
         return color;
     }
+
     
      /**
      * Returns int between low and high

@@ -31,19 +31,23 @@ public class SearchAndSort {
         return copy;
     }
         
-        public static NeuralNetwork[] bubbleSortNN(NeuralNetwork [] nn){
-        NeuralNetwork[] copy = nn.clone();
-        for (int i = 0; i < copy.length; i++) {
-            for (int j = 0; j < copy.length - 1; j++) {
-                if (copy[j].getFitness() < copy[j+1].getFitness()) {
-                    // Swap them (by making a temporary variable)
-                    NeuralNetwork swap = copy[j];
-                    copy[j]     = copy[j+1];
-                    copy[j+1]   = swap;
-               }         
+     public static NeuralNetwork[] bubbleSort(NeuralNetwork[] nn) {
+       
+            NeuralNetwork[] copy = nn.clone();
+            for (int i = 0; i < copy.length; i++) {
+                for (int j = 0; j < copy.length - 1; j++) {
+                    if (copy[j].getFitness() < copy[j + 1].getFitness()) {
+                        // Swap them (by making a temporary variable)
+                        NeuralNetwork swap = copy[j];
+                        copy[j] = copy[j + 1];
+                        copy[j + 1] = swap;
+                    }
+                }
             }
-        }
+
+            return copy;
         
-        return copy;
+        
     }
+     
 }

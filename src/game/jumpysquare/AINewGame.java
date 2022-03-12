@@ -2,7 +2,9 @@
 package game.jumpysquare;
 
 import collections.LinkedList;
+import static game.jumpysquare.NewGame.towers;
 import game.logic.Collision;
+import game.logic.Player;
 import game.logic.Tower;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,13 +15,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import nn.NeuralNetwork;
 import nn.genetics.Genetics;
+import nn.math.SearchAndSort;
 
 /**
  *
  * @author lazyf
  */
 public class AINewGame extends Visuals{
-    //Hello
     boolean timerCheck = false; // checks if timer should run
     int generation = 0; // keeps track of ai generation
     int round = 0; // keeps track of rounds ai played
@@ -29,12 +31,12 @@ public class AINewGame extends Visuals{
     boolean first = true;
     Collision collision = new Collision();
     int target = 5; // increases difficulty at score 10
-    int score = 0;
+    
     
     int distance = 350; // distance needed for new tower to spawn
     
     public static final int amount = 200;
-    public static final int inputs = 2;
+    public static final int inputs = 3;
     
     int speed = 3; // speed of towers; higher = faster
     int timerSpeed = 20; // speed of timer
@@ -42,6 +44,9 @@ public class AINewGame extends Visuals{
     int jumpHeight = 15; //jump height
     Genetics genetics = new Genetics();
     
+    
+    public int x1Draw = 0;
+    public int x2Draw = 0;
     public static LinkedList<Tower> towers = new LinkedList<>();
     public AINewGame(){
         System.out.println("");
@@ -51,7 +56,7 @@ public class AINewGame extends Visuals{
         play = true;
         timerCheck = true;
         for (int i = 0; i < nnPlayers.length; i++) {
-            nnPlayers[i] = new NeuralNetwork(inputs, 3); // creates AI's
+            nnPlayers[i] = new NeuralNetwork(inputs, 4); // creates AI's
         }  
         towers.add(new Tower());
         repaint();
@@ -63,6 +68,9 @@ public class AINewGame extends Visuals{
         super.paintComponent(g); 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.gray);
+        
+        g2d.drawLine(25, x1Draw, 25, x2Draw);
+        
         int height = 150; // height of the bottom layer 
         //set environment
         g2d.setColor(Color.gray);
@@ -89,8 +97,9 @@ public class AINewGame extends Visuals{
             towers.add(new Tower());
         }
        g2d.setColor(Color.black);
-       g2d.setFont(new Font("TimesRoman", Font.PLAIN, 50));
-       g2d.drawString(generation + "", frame.getWidth()/2 - 25, 60);
+       g2d.setFont(new Font("TimesRoman", Font.PLAIN, 25));
+       g2d.drawString("Generation: " + generation, frame.getWidth()/2, 60);
+       g2d.drawString("Score: " + Player.score, 5, 60);
     }
    
     public void jump(int i){
@@ -141,10 +150,8 @@ public class AINewGame extends Visuals{
 
             //gets the top two players and breeds them
            
-            nnPlayers = genetics.crossing(best);
+            nnPlayers = genetics.crossing(best).clone();
             for (int i = 0; i < nnPlayers.length; i++) {
-                //System.out.println(nnPlayers[i].getHidden(0));
-                
                 nnPlayers[i].setFitness(0);
             }
        }
@@ -154,11 +161,12 @@ public class AINewGame extends Visuals{
             nnPlayers[i].reincarnate();
             nnPlayers[i].setY(150);
             nnPlayers[i].setYVel(0);
+            System.out.println("RESET SCORE");
+            Player.score = 0;
             
         }
         towers.clear();
         towers.add(new Tower());
-        score = 0;
         speed = 3;
         distance = 350;
         target = 5;
@@ -172,16 +180,23 @@ public class AINewGame extends Visuals{
             @Override
             public void run() {
                     aILoop();
-                if (score == target) {
+                    System.out.println(Player.score);
+                if (Player.score == target) {
                     target += 10;
-                    //speed += 1;
+                    speed += 1;
                 }
                 if (timerCheck) {
                     for (int i = 0; i < towers.size(); i++) {
                         towers.get(i).changeX(speed);
                     }
                     for (int i = 0; i < nnPlayers.length; i++) {
-                        if(nnPlayers[i].isAlive()){
+                        if (nnPlayers[i].isAlive()) {
+                            //checking if the ai scores
+                            if (collision.checkPoint(nnPlayers[i].getPlayer(), towers)) {
+                                System.out.println("It happened");
+                                Player.score++;
+                                System.out.println(Player.score);
+                            }
                             nnPlayers[i].changeYVel(fallSpeed);
                         }
                     }
@@ -209,12 +224,18 @@ public class AINewGame extends Visuals{
         for (int i = 0; i < nnPlayers.length; i++) {
             int distance = 0;
             if(nnPlayers[i].getY() < temp.getBottom().y){
-                distance = temp.getBottom().y - nnPlayers[i].getY();
+                x1Draw = nnPlayers[i].getY();
+                distance = temp.getBottom().y - nnPlayers[i].getY() - 100;
+                x2Draw = nnPlayers[i].getY() + distance;
             }
             else if(nnPlayers[i].getY() > temp.getBottom().getY()){
-                 distance =nnPlayers[i].getY() - temp.getBottom().y;
+                 distance =nnPlayers[i].getY() - temp.getBottom().y + 100;
+                 x1Draw = nnPlayers[i].getY();
+                  x2Draw = nnPlayers[i].getY() - distance;
             }
+            //inputs to feed forward. 
             double inputs[] = {
+                speed,
                 distance/5,
                 nnPlayers[i].getYVel()/5
             };

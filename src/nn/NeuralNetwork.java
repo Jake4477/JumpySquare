@@ -51,9 +51,10 @@ public class NeuralNetwork extends Player{
      * @param inputs the initial inputs
      */
     private void createStructure(double [] inputs){
-        Neuron layer2[] = new Neuron[hidden.length/2];
+        //might cause problem. Hidden/2 if so
+        Neuron layer2[] = new Neuron[hidden.length];
         //creates the second layer in the hidden layer
-        for (int i = 0; i < hidden.length/2; i++) {
+        for (int i = 0; i < hidden.length; i++) {
             layer2[i] = new Neuron();
         }
        
@@ -187,6 +188,7 @@ public class NeuralNetwork extends Player{
         }
         Neuron output = this.output.clone();
         NeuralNetwork nn = new NeuralNetwork(this.inputNum, tempHiddens, output);
+        nn.fitness = this.fitness;
         return nn;
     }
     
