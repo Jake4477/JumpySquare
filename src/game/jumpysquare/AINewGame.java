@@ -31,6 +31,7 @@ public class AINewGame extends Visuals{
     boolean first = true;
     Collision collision = new Collision();
     int target = 5; // increases difficulty at score 10
+    int alive = 0;
     
     
     int distance = 350; // distance needed for new tower to spawn
@@ -49,7 +50,6 @@ public class AINewGame extends Visuals{
     public int x2Draw = 0;
     public static LinkedList<Tower> towers = new LinkedList<>();
     public AINewGame(){
-        System.out.println("");
         nnPlayers = new NeuralNetwork[amount]; // number of ai's to train
         //if play was pressed play = true;
         //if watch was pressed play = false;
@@ -99,6 +99,7 @@ public class AINewGame extends Visuals{
        g2d.setColor(Color.black);
        g2d.setFont(new Font("TimesRoman", Font.PLAIN, 25));
        g2d.drawString("Generation: " + generation, frame.getWidth()/2, 60);
+       g2d.drawString("Alive: " + alive, frame.getWidth()-150, 60);
        g2d.drawString("Score: " + Player.score, 5, 60);
     }
    
@@ -113,26 +114,22 @@ public class AINewGame extends Visuals{
     
     ///////////////Change for AI Logic///////////////////////////////
     public boolean checkDeath(){
-        
+        int numberAlive = 0;
         for (int i = 0; i < nnPlayers.length; i++) {
+            
             if(nnPlayers[i].isAlive()) {
+                numberAlive++;
                // System.out.println(nnPlayers[i].getY());
-                if(nnPlayers[i].getY() > 30){
-                   nnPlayers[i].changeFitness(1);
-                  // System.out.println("GOOOD");
-                }
-                else{
-                    
-                     nnPlayers[i].changeFitness(-1);
-                }
-                  
-            };
+                nnPlayers[i].changeFitness(1);
+            }
         }
+        alive = numberAlive;
          for (int i = 0; i < nnPlayers.length; i++) {
             if(nnPlayers[i].isAlive()) {
                 return false;
             };
         }
+        alive = 0;
      
         //check round and train if neccassary 
         if(round==3){
@@ -222,30 +219,35 @@ public class AINewGame extends Visuals{
             }
         }
         for (int i = 0; i < nnPlayers.length; i++) {
-            int distance = 0;
-            if(nnPlayers[i].getY() < temp.getBottom().y){
-                x1Draw = nnPlayers[i].getY();
-                distance = temp.getBottom().y - nnPlayers[i].getY() - 100;
-                x2Draw = nnPlayers[i].getY() + distance;
+            int yDistance = 0;
+            int xDistance = 0;
+            //distance = Square root((y2 - y1)^2)
+            
+            yDistance = nnPlayers[i].getY() - (temp.getBottom().y - 100);
+            xDistance = nnPlayers[i].getX() - (temp.getBottom().x);
+            if(xDistance < 0) xDistance *= -1;
+            
+          //  if(distance < 0) distance *= -1;
+            
+            
+            if(nnPlayers[i].getY() < (temp.getBottom().y + 100)){
+//                x1Draw = nnPlayers[i].getY();
+//                distance = temp.getBottom().y - (nnPlayers[i].getY() + 100);
+               // x2Draw = nnPlayers[i].getY() + distance;
             }
-            else if(nnPlayers[i].getY() > temp.getBottom().getY()){
-                 distance =nnPlayers[i].getY() - temp.getBottom().y + 100;
-                 x1Draw = nnPlayers[i].getY();
-                  x2Draw = nnPlayers[i].getY() - distance;
+            else if(nnPlayers[i].getY() > (temp.getBottom().getY() - 100)){
+//                 distance =nnPlayers[i].getY() - (temp.getBottom().y - 100);
+//                 x1Draw = nnPlayers[i].getY();
+                 // x2Draw = nnPlayers[i].getY() - distance;
             }
-            //inputs to feed forward. 
+            //inputs to feed forward.
+            System.out.println(temp.getBottom().x);
             double inputs[] = {
-                speed,
-                distance/5,
-                nnPlayers[i].getYVel()/5
+                speed / 5,
+                yDistance / 5,
+                nnPlayers[i].getYVel()/ 5
             };
-//            System.out.print("[");
-//            for (int j = 0; j < inputs.length; j++) {
-//                System.out.print(inputs[j] + ",");
-//            }
-//            System.out.print("]");
-//            System.out.println("");
-          //  System.out.println(distance);
+            //System.out.println(distance);
           
             double output = nnPlayers[i].feedForward(inputs);
 //            for (int j = 0; j < nnPlayers[0].getHidden().length; j++) {

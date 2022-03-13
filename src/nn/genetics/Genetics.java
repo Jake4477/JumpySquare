@@ -10,7 +10,7 @@ import static nn.math.SearchAndSort.bubbleSort;
  * @author lazyf
  */
 public class Genetics {
-    NeuralNetwork[] best;
+    NeuralNetwork best[] = new NeuralNetwork[2];
     boolean firstRun = true;
     
 
@@ -37,21 +37,24 @@ public class Genetics {
         NeuralNetwork[] children = ranked.clone();
         int preset = 0;
         //keep best performing by comparing past best and new best    
-//        if(firstRun){
-//            best = ranked.clone();
-//            firstRun = false;
-//        }
+        if(firstRun){
+            best[0] = ranked[0];
+            best[1] = ranked[1];
+            firstRun = false;
+        }
 //        for (int i = 0; i < ranked.length; i++) {
 //            if(best[i].getFitness() < ranked[i].getFitness()){
 //                best[i] = ranked[i].clone();
 //            }
 //        }
 
-        for (int i = 0; i < 4; i++) {
-            System.out.println(ranked[i].getFitness() + " < Ranked: " + i);
+        //keeps track of best of all time
+        for (int i = 0; i < best.length; i++) {
+            if (best[i].getFitness() < ranked[i].getFitness()) {
+                best[i] = ranked[i].clone();
+            }
         }
-        System.out.println("");
-   
+        
         if(AINewGame.amount == 1){
             children[0] = ranked[ranked.length - 1];
             preset = 1;

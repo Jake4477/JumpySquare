@@ -3,7 +3,6 @@ package game.logic;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
