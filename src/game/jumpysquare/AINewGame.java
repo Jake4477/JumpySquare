@@ -37,7 +37,7 @@ public class AINewGame extends Visuals{
     int distance = 350; // distance needed for new tower to spawn
     
     public static final int amount = 200;
-    public static final int inputs = 3;
+    public static final int inputs = 2;
     
     int speed = 3; // speed of towers; higher = faster
     int timerSpeed = 20; // speed of timer
@@ -56,7 +56,7 @@ public class AINewGame extends Visuals{
         play = true;
         timerCheck = true;
         for (int i = 0; i < nnPlayers.length; i++) {
-            nnPlayers[i] = new NeuralNetwork(inputs, 4); // creates AI's
+            nnPlayers[i] = new NeuralNetwork(inputs, 3); // creates AI's
         }  
         towers.add(new Tower());
         repaint();
@@ -120,7 +120,10 @@ public class AINewGame extends Visuals{
             if(nnPlayers[i].isAlive()) {
                 numberAlive++;
                // System.out.println(nnPlayers[i].getY());
-                nnPlayers[i].changeFitness(1);
+               if(nnPlayers[i].getY() > 10){
+                    nnPlayers[i].changeFitness(1);
+               }
+               
             }
         }
         alive = numberAlive;
@@ -180,7 +183,7 @@ public class AINewGame extends Visuals{
                     System.out.println(Player.score);
                 if (Player.score == target) {
                     target += 10;
-                    speed += 1;
+                    //speed += 1;
                 }
                 if (timerCheck) {
                     for (int i = 0; i < towers.size(); i++) {
@@ -226,7 +229,9 @@ public class AINewGame extends Visuals{
             yDistance = nnPlayers[i].getY() - (temp.getBottom().y - 100);
             xDistance = nnPlayers[i].getX() - (temp.getBottom().x);
             if(xDistance < 0) xDistance *= -1;
-            
+          
+            int distance = xDistance + yDistance;
+            //(x2 - x1) + (y2 - y1) 
           //  if(distance < 0) distance *= -1;
             
             
@@ -241,9 +246,8 @@ public class AINewGame extends Visuals{
                  // x2Draw = nnPlayers[i].getY() - distance;
             }
             //inputs to feed forward.
-            System.out.println(temp.getBottom().x);
+    
             double inputs[] = {
-                speed / 5,
                 yDistance / 5,
                 nnPlayers[i].getYVel()/ 5
             };

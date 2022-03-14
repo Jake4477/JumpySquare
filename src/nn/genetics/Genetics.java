@@ -30,9 +30,7 @@ public class Genetics {
          *    Parent 2 [3] [8] [2] [6] [7] 
          *    Child =  [1] [8] [2] [1] [6]
          */
-        //Keep same parent 1 and parent 2 in population
-        NeuralNetwork p1Copy = ranked[0].clone();
-        NeuralNetwork p2Copy = ranked[1].clone();
+      
         //create new population
         NeuralNetwork[] children = ranked.clone();
         int preset = 0;
@@ -54,6 +52,9 @@ public class Genetics {
                 best[i] = ranked[i].clone();
             }
         }
+          //Keep same parent 1 and parent 2 in population
+        NeuralNetwork p1Copy = best[0].clone();
+        NeuralNetwork p2Copy = best[1].clone();
         
         if(AINewGame.amount == 1){
             children[0] = ranked[ranked.length - 1];
